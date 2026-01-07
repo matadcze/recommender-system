@@ -6,6 +6,26 @@ A recommendation system project using the MovieLens dataset.
 
 - Python 3.12+
 - [UV](https://docs.astral.sh/uv/) package manager
+- [Docker](https://www.docker.com/) and Docker Compose
+
+### Installing Docker
+
+**macOS:**
+
+Download and install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/).
+
+**Windows:**
+
+Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/).
+
+**Linux (Ubuntu/Debian):**
+
+```bash
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+```
+
+Log out and back in for group changes to take effect.
 
 ### Installing UV
 
@@ -37,9 +57,34 @@ brew install uv
    ```
 
 2. Install dependencies:
+
    ```bash
    uv sync
    ```
+
+3. Start infrastructure services:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+   This starts:
+   - **PostgreSQL** on port 5432
+   - **Spark Master** UI on http://localhost:8080
+   - **Spark Worker** connected to master
+
+4. Stop services when done:
+   ```bash
+   docker-compose down
+   ```
+
+## Running the Project
+
+Run the main application:
+
+```bash
+uv run python main.py
+```
 
 ## Running Notebooks
 
