@@ -72,6 +72,7 @@ brew install uv
    - **PostgreSQL** on port 5432
    - **Spark Master** UI on http://localhost:8080
    - **Spark Worker** connected to master
+   - **Web (Next.js)** on http://localhost:3000
 
 4. Stop services when done:
    ```bash
@@ -85,6 +86,10 @@ Run the main application:
 ```bash
 uv run python main.py
 ```
+
+## Web Application
+
+The web application uses Next.js. The web container will automatically install dependencies and start the dev server when you run `docker-compose up`.
 
 ## Running Notebooks
 
