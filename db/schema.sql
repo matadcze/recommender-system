@@ -1,19 +1,23 @@
+CREATE SCHEMA IF NOT EXISTS movielens;
+
+SET search_path TO movielens;
+
 -- 1. movie.csv
-CREATE TABLE movies (
+CREATE TABLE IF NOT EXISTS movies (
     movie_id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     genres TEXT
 );
 
 -- 2. link.csv
-CREATE TABLE links (
+CREATE TABLE IF NOT EXISTS links (
     movie_id INTEGER PRIMARY KEY REFERENCES movies(movie_id),
     imdb_id INTEGER,
     tmdb_id INTEGER
 );
 
 -- 3. rating.csv
-CREATE TABLE ratings (
+CREATE TABLE IF NOT EXISTS ratings (
     user_id INTEGER NOT NULL,
     movie_id INTEGER NOT NULL REFERENCES movies(movie_id),
     rating REAL NOT NULL,
@@ -22,7 +26,7 @@ CREATE TABLE ratings (
 );
 
 -- 4. tag.csv
-CREATE TABLE tags (
+CREATE TABLE IF NOT EXISTS tags (
     user_id INTEGER NOT NULL,
     movie_id INTEGER REFERENCES movies(movie_id),
     tag TEXT,
@@ -30,15 +34,19 @@ CREATE TABLE tags (
 );
 
 -- 5. genome_tags.csv
-CREATE TABLE genome_tags (
+CREATE TABLE IF NOT EXISTS genome_tags (
     tag_id INTEGER PRIMARY KEY,
     tag TEXT
 );
 
 -- 6. genome_scores.csv
-CREATE TABLE genome_scores (
+CREATE TABLE IF NOT EXISTS genome_scores (
     tag_id INTEGER NOT NULL REFERENCES genome_tags(tag_id),
     movie_id INTEGER NOT NULL REFERENCES movies(movie_id),
     relevance REAL,
     PRIMARY KEY (movie_id, tag_id)
 );
+
+GRANT USAGE ON SCHEMA movielens TO recommender;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA movielens TO recommender;
