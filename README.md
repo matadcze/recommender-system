@@ -114,4 +114,4 @@ This opens JupyterLab in your browser. Navigate to the `notebooks/` directory an
 
 ### Available Notebooks
 
-- `notebooks/start.ipynb` - Initial data exploration with MovieLens ratings data
+- `notebooks/01_dataset_exploration.ipynb` - Initial data exploration with MovieLens ratings data. **Note:** To download data via the Kaggle API in this notebook, you must generate an API key (`kaggle.json`) from your Kaggle account settings and store it locally at `~/.kaggle/kaggle.json` (Linux/Mac) or `C:\Users\<username>\.kaggle\kaggle.json` (Windows).
