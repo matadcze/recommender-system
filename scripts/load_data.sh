@@ -5,15 +5,22 @@ set -e
 CONTAINER="recommender-postgres"
 DB_USER="recommender"
 DB_NAME="recommender"
-DATA_DIR="$(cd "$(dirname "$0")/.." && pwd)/data"  # directory with CSV files
+DATA_DIR="$(cd "$(dirname "$0")/.." && pwd)/data"
+ZIP_FILE="$DATA_DIR/movielens-20m-dataset.zip"
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+echo "Extracting dataset from $ZIP_FILE..."
+unzip -q "$ZIP_FILE" -d "$TMPDIR"
 
 echo "Copying CSV files to container..."
-docker cp "$DATA_DIR/movie.csv" "$CONTAINER:/tmp/"
-docker cp "$DATA_DIR/link.csv" "$CONTAINER:/tmp/"
-docker cp "$DATA_DIR/rating.csv" "$CONTAINER:/tmp/"
-docker cp "$DATA_DIR/tag.csv" "$CONTAINER:/tmp/"
-docker cp "$DATA_DIR/genome_tags.csv" "$CONTAINER:/tmp/"
-docker cp "$DATA_DIR/genome_scores.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/movie.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/link.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/rating.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/tag.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/genome_tags.csv" "$CONTAINER:/tmp/"
+docker cp "$TMPDIR/genome_scores.csv" "$CONTAINER:/tmp/"
 
 echo "Loading data into database..."
 docker exec -i "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" <<'EOF'
