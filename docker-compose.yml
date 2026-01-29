@@ -1,6 +1,8 @@
 services:
   postgres:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     container_name: recommender-postgres
     environment:
       POSTGRES_USER: recommender
@@ -12,7 +14,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   spark-master:
-    image: apache/spark:4.1.1-scala2.13-java21-python3-r-ubuntu
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
     container_name: recommender-spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
@@ -20,7 +24,9 @@ services:
       - "7077:7077"
 
   spark-worker:
-    image: apache/spark:4.1.1-scala2.13-java21-python3-r-ubuntu
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
     container_name: recommender-spark-worker
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     environment:
@@ -80,6 +86,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+      - PYSPARK_PYTHON=python3.12
     depends_on:
       - postgres
       - spark-master
