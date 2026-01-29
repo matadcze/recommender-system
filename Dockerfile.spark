@@ -8,9 +8,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y --no-install-recommends python3.12 python3.12-venv python3.12-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-
-ENV PATH="/root/.local/bin:${PATH}"
-ENV PYSPARK_PYTHON=/app/.venv/bin/python3.12
+    curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
+ENV PYSPARK_PYTHON=/opt/spark-venv/bin/python3.12
 
 USER spark

@@ -28,12 +28,13 @@ services:
       context: .
       dockerfile: Dockerfile.spark
     container_name: recommender-spark-worker
-    command: sh -c "cd /app && uv sync && /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
+    user: root
+    command: sh -c "cd /app && UV_PROJECT_ENVIRONMENT=/opt/spark-venv uv sync && /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077"
     volumes:
       - .:/app
     environment:
-      SPARK_WORKER_MEMORY: 4g
-      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 8g
+      SPARK_WORKER_CORES: 4
     depends_on:
       - spark-master
 
@@ -88,7 +89,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
-      - PYSPARK_PYTHON=/app/.venv/bin/python3.12
+      - PYSPARK_PYTHON=/opt/spark-venv/bin/python3.12
     depends_on:
       - postgres
       - spark-master
