@@ -5,7 +5,7 @@ set -e
 CONTAINER="recommender-postgres"
 DB_USER="recommender"
 DB_NAME="recommender"
-DATA_DIR="../data"  # directory with CSV files
+DATA_DIR="$(cd "$(dirname "$0")/.." && pwd)/data"  # directory with CSV files
 
 echo "Copying CSV files to container..."
 docker cp "$DATA_DIR/movie.csv" "$CONTAINER:/tmp/"
