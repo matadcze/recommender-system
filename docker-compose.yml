@@ -12,7 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   spark-master:
-    image: apache/spark:4.1.0-scala2.13-java21-python3-r-ubuntu
+    image: apache/spark:4.1.1-scala2.13-java21-python3-r-ubuntu
     container_name: recommender-spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
@@ -20,7 +20,7 @@ services:
       - "7077:7077"
 
   spark-worker:
-    image: apache/spark:4.1.0-scala2.13-java21-python3-r-ubuntu
+    image: apache/spark:4.1.1-scala2.13-java21-python3-r-ubuntu
     container_name: recommender-spark-worker
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     environment:
@@ -55,6 +55,35 @@ services:
       - PYTHONUNBUFFERED=1
     depends_on:
       - postgres
+
+  jupyter:
+    image: python:3.12-slim
+    container_name: recommender-jupyter
+    working_dir: /app
+    command: >
+      sh -c "apt-get update &&
+             apt-get install -y --no-install-recommends wget gnupg &&
+             wget -q -O /tmp/corretto.key https://apt.corretto.aws/corretto.key &&
+             gpg --batch --yes --dearmor -o /usr/share/keyrings/corretto-keyring.gpg /tmp/corretto.key &&
+             rm /tmp/corretto.key &&
+             echo 'deb [signed-by=/usr/share/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main' > /etc/apt/sources.list.d/corretto.list &&
+             apt-get update &&
+             apt-get install -y --no-install-recommends java-17-amazon-corretto-jdk &&
+             apt-get clean && rm -rf /var/lib/apt/lists/* &&
+             pip install uv && uv sync &&
+             uv run jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token='' --allow-root"
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
+    depends_on:
+      - postgres
+      - spark-master
+      - spark-worker
 
 volumes:
   web_node_modules:
